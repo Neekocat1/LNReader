@@ -25,6 +25,18 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+
+
+        </activity>
+        <activity
+            android:name=".NovelActivity"
+            android:exported="true"
+            android:label="Novel">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
     </application>
 

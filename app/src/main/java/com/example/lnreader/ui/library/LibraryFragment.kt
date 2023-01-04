@@ -1,19 +1,18 @@
 package com.example.lnreader.ui.library
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.GridView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.lnreader.NovelActivity
 import com.example.lnreader.R
 import com.example.lnreader.databinding.FragmentLibraryBinding
-import com.example.lnreader.library.LibraryGridAdapter
-import com.example.lnreader.library.LibraryGridModal
 
 class LibraryFragment : Fragment() {
 
@@ -57,6 +56,10 @@ class LibraryFragment : Fragment() {
                 activity, novelList[position].novelName + " selected",
                 Toast.LENGTH_SHORT
             ).show()
+            val intent = Intent(this.context, NovelActivity::class.java)
+            intent.putExtra("Title", novelList[position].novelName)
+            intent.putExtra("Img", novelList[position].novelCover)
+            activity?.startActivity(intent)
         }
         return root
     }

@@ -1,4 +1,4 @@
-package com.example.lnreader.library
+package com.example.lnreader.ui.library
 
 import android.content.Context
 import android.view.LayoutInflater

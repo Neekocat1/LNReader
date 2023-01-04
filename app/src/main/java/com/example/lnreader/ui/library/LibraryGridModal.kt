@@ -1,4 +1,4 @@
-package com.example.lnreader.library
+package com.example.lnreader.ui.library
 
 data class LibraryGridModal(
     val novelName: String,
