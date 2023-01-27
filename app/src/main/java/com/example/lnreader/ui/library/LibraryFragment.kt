@@ -1,6 +1,7 @@
 package com.example.lnreader.ui.library
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +11,15 @@ import android.widget.GridView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.room.Room
 import com.example.lnreader.NovelActivity
 import com.example.lnreader.R
+import com.example.lnreader.database.AppDatabase
+import com.example.lnreader.database.Novel
 import com.example.lnreader.databinding.FragmentLibraryBinding
+import com.example.lnreader.ui.chapter.Chapter
+import org.json.JSONArray
+import org.json.JSONTokener
 
 class LibraryFragment : Fragment() {
 
@@ -22,7 +29,7 @@ class LibraryFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     lateinit var libraryGRV: GridView
-    lateinit var novelList : List<LibraryGridModal>
+    lateinit var novelList : MutableList<LibraryGridModal>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,14 +43,24 @@ class LibraryFragment : Fragment() {
         val root: View = binding.root
 
         libraryGRV = binding.gridLibrary
-        novelList = ArrayList<LibraryGridModal>()
-        novelList += LibraryGridModal("Test1", R.drawable.test_img_1)
-        novelList += LibraryGridModal("Test2", R.drawable.test_img_2)
-        novelList += LibraryGridModal("Test3", R.drawable.test_img_3)
-        novelList += LibraryGridModal("Test4", R.drawable.test_img_4)
-        novelList += LibraryGridModal("Test5", R.drawable.test_img_5)
-        novelList += LibraryGridModal("Test6", R.drawable.test_img_6)
-        novelList += LibraryGridModal("Test7", R.drawable.test_img_7)
+        novelList = mutableListOf<LibraryGridModal>()
+
+        val jsonString = context?.assets?.open("library.json")?.bufferedReader(Charsets.UTF_8)
+            .use { it?.readText() }
+        val jsonArray = JSONTokener(jsonString).nextValue() as JSONArray
+
+
+        for (i in 0 until jsonArray.length())
+        {
+            var json = jsonArray.getJSONObject(i)
+            var novelTitle = json.getString("title")
+            var novelId = json.getInt("id")
+            var novelCover : Drawable
+            context?.assets?.open(json.getString("location") + "cover.png").use {
+                novelCover = Drawable.createFromStream(it, null)!!
+            }
+            novelList.add(LibraryGridModal(novelTitle, novelCover, novelId, json.getString("location")))
+        }
 
 
         val libraryAdapter = this.context?.let { LibraryGridAdapter(novelList = novelList, it) }
@@ -57,10 +74,10 @@ class LibraryFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
             val intent = Intent(this.context, NovelActivity::class.java)
-            intent.putExtra("Title", novelList[position].novelName)
-            intent.putExtra("Img", novelList[position].novelCover)
+            intent.putExtra("fileLoc", novelList[position].novelLocation)
             activity?.startActivity(intent)
         }
+
         return root
     }
 

@@ -1,5 +1,10 @@
 package com.example.lnreader.ui.library
 
+import android.graphics.drawable.Drawable
+
 data class LibraryGridModal(
     val novelName: String,
-    val novelCover: Int)
+    val novelCover: Drawable,
+    val novelId: Int,
+    var novelLocation: String
+)

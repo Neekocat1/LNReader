@@ -50,9 +50,9 @@ internal class LibraryGridAdapter(
             courseIV = convertView!!.findViewById(R.id.idIVCourse)
             courseTV = convertView!!.findViewById(R.id.idTVCourse)
             // on below line we are setting image for our course image view.
-            courseIV.setImageResource(novelList.get(position).novelCover)
+            courseIV.setImageDrawable(novelList[position].novelCover)
             // on below line we are setting text in our course text view.
-            courseTV.setText(novelList.get(position).novelName)
+            courseTV.text = novelList[position].novelName
             // at last we are returning our convert view.
             return convertView
         }
