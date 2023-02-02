@@ -1,5 +1,6 @@
 package com.example.lnreader.ui.chapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +9,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lnreader.R
+import com.example.lnreader.database.AppDatabase
 
-class ChapterAdapter(private val onClick: (chapter : Chapter) -> Unit, var chapters: MutableList<Chapter>): RecyclerView.Adapter<ChapterAdapter.ViewHolder>() {
+class ChapterAdapter(val context: Context, private val onClick: (chapter : com.example.lnreader.database.Chapter) -> Unit, var chapters: List<com.example.lnreader.database.Chapter>): RecyclerView.Adapter<ChapterAdapter.ViewHolder>() {
 
 
-    inner class ViewHolder(itemView: View, val onClick: (chapter : Chapter) -> Unit): RecyclerView.ViewHolder(itemView){
+    inner class ViewHolder(itemView: View, val onClick: (chapter : com.example.lnreader.database.Chapter) -> Unit): RecyclerView.ViewHolder(itemView){
         var chapterTitle: TextView
         var img: ImageView
         init {
@@ -20,15 +22,13 @@ class ChapterAdapter(private val onClick: (chapter : Chapter) -> Unit, var chapt
             img = itemView.findViewById(R.id.readImg)
 
             itemView.setOnClickListener {
-                chapters[adapterPosition]?.let {
+                chapters[adapterPosition].let {
                     onClick(it)
                 }
             }
             itemView.setOnLongClickListener{
-                chapters[adapterPosition].MarkRead()
-                chapters[adapterPosition].Save()
-
-
+                chapters[adapterPosition].markedAsRead = !chapters[adapterPosition].markedAsRead
+                AppDatabase.getDatabase(context).ChapterDao().InsertChapter(chapters[adapterPosition])
                 true
             }
         }

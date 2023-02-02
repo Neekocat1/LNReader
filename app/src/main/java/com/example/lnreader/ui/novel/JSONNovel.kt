@@ -2,11 +2,9 @@ package com.example.lnreader.ui.novel
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import com.example.lnreader.ui.chapter.Chapter
+import com.example.lnreader.database.Chapter
 import org.json.JSONObject
 import org.json.JSONTokener
-import java.io.File
-import java.io.InputStream
 import kotlin.properties.Delegates
 
 class JSONNovel(context: Context, fileLoc: String) : NovelInterface {
@@ -42,7 +40,7 @@ class JSONNovel(context: Context, fileLoc: String) : NovelInterface {
             var chName = chJson.getString("title")
             var chLoc = fileLoc + "pdf/" + chJson.getString("location")
             var chMAR = chJson.getBoolean("read")
-            chapters.add(Chapter(context, chId, chName, chLoc, chMAR, fileLoc + "meta.json"))
+            //chapters.add(Chapter(context, chId, chName, chLoc, chMAR, fileLoc + "meta.json"))
         }
 
     }

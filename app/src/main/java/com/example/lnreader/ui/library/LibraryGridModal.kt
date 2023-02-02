@@ -6,5 +6,4 @@ data class LibraryGridModal(
     val novelName: String,
     val novelCover: Drawable,
     val novelId: Int,
-    var novelLocation: String
 )

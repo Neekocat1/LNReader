@@ -31,8 +31,8 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        val files = filesDir
-        var dbSetup = DBSetup(this)
+        //val files = filesDir
+        //var dbSetup = DBSetup(this)
         //dbSetup.ImportData()
 
     }

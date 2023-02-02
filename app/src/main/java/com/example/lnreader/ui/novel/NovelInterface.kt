@@ -1,7 +1,7 @@
 package com.example.lnreader.ui.novel
 
 import android.graphics.drawable.Drawable
-import com.example.lnreader.ui.chapter.Chapter
+import com.example.lnreader.database.Chapter
 
 
 interface NovelInterface {
