@@ -66,7 +66,6 @@ class NovelActivity : AppCompatActivity() {
     }
 
     fun onClick(chapter: com.example.lnreader.database.Chapter){
-        //TODO: Change chapter opening to use database file location.
         Toast.makeText(this, chapter.title, Toast.LENGTH_SHORT).show()
 
 
