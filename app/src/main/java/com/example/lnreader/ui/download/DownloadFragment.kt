@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.chaquo.python.Python
+import com.chaquo.python.android.AndroidPlatform
 import com.example.lnreader.databinding.FragmentDownloadBinding
 
 class DownloadFragment : Fragment() {
@@ -27,11 +29,18 @@ class DownloadFragment : Fragment() {
 
         _binding = FragmentDownloadBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
         val textView: TextView = binding.textDownload
         downloadViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
+
+        if (! Python.isStarted()) {
+            context?.let { AndroidPlatform(it) }?.let { Python.start(it) };
+        }
+        val py = Python.getInstance()
+
+
+
         return root
     }
 
