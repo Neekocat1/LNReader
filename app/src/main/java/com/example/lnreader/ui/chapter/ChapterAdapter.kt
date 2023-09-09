@@ -22,9 +22,7 @@ class ChapterAdapter(val context: Context, private val onClick: (chapter : com.e
             img = itemView.findViewById(R.id.readImg)
 
             itemView.setOnClickListener {
-                chapters[adapterPosition].let {
-                    onClick(it)
-                }
+                onClick(chapters[adapterPosition])
             }
             itemView.setOnLongClickListener{
                 chapters[adapterPosition].markedAsRead = !chapters[adapterPosition].markedAsRead
@@ -42,17 +40,24 @@ class ChapterAdapter(val context: Context, private val onClick: (chapter : com.e
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.chapterTitle.text = chapters[position].title
+        updateIcon(holder, position)
+
+    }
+    fun updateIcon(holder: ViewHolder, position: Int)
+    {
         if(chapters[position].markedAsRead)
         {
-            holder.img.setImageResource(R.drawable.ic_home_black_24dp)
+            holder.img.setImageResource(R.drawable.baseline_check_circle_24)
+        }
+        else if(!chapters[position].isDownloaded)
+        {
+            holder.img.setImageResource(R.drawable.baseline_download_24)
         }
         else
         {
-            holder.img.setImageResource(R.drawable.ic_notifications_black_24dp)
+            holder.img.setImageResource(R.color.transparent)
         }
-
     }
-
     override fun getItemCount(): Int {
         return chapters.size;
     }

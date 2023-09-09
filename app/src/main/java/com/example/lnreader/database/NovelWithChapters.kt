@@ -9,6 +9,6 @@ data class NovelWithChapters(
         parentColumn = "id",
         entityColumn = "novelId"
     )
-    val chapters: List<Chapter>
+    val chapters: MutableList<Chapter>
     ) {
 }

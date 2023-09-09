@@ -5,7 +5,7 @@ import androidx.room.*
 @Dao
 interface NovelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun InsertNovel(novel: Novel)
+    fun InsertNovel(novel: Novel) : Long
 
     @Delete
     fun DeleteNovel(novel: Novel)
@@ -19,5 +19,6 @@ interface NovelDao {
     @Query("SELECT * FROM Novel WHERE id = :id")
     fun GetNovelWithChapters(id: Int) : NovelWithChapters
 
-
+    @Query("SELECT * FROM Novel WHERE title = :title")
+    fun GetNovelFromTitle(title: String) : Novel?
 }

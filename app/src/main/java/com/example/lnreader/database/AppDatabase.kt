@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Novel::class, Chapter::class], version = 1)
+@Database(entities = [Novel::class, Chapter::class], version = 4)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun NovelDao(): NovelDao
     abstract fun ChapterDao(): ChapterDao
@@ -24,7 +24,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "Library"
-                ).allowMainThreadQueries().build()
+                ).allowMainThreadQueries().fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 // return instance
                 instance

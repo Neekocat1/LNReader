@@ -5,12 +5,14 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Novel(
-    @PrimaryKey(autoGenerate = true) val id : Int,
+    @PrimaryKey(autoGenerate = true) var id : Int,
     val title : String,
     val website : String,
-    val coverLocation : String,
+    var coverLocation : String,
     var autoupdate : Boolean,
     val description : String,
+    var lastAccessed : Long,
+    var lastUpdated : Long
     //val author : String
 ) {
 }

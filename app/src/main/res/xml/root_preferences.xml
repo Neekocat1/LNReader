@@ -1,0 +1,13 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <ListPreference
+        app:defaultValue="Title"
+        app:entries="@array/filter_entries"
+        app:entryValues="@array/filter_values"
+        app:key="filterDefault"
+        app:title="Default Library Filter"
+        app:useSimpleSummaryProvider="true" />
+
+
+</PreferenceScreen>

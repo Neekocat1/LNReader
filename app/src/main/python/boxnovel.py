@@ -1,12 +1,11 @@
 from bs4 import BeautifulSoup
 import requests
 import json
-from xhtml2pdf import pisa
 
 def SearchNovels(searchTerm):
     searchTerm = searchTerm.replace(" ", "+")
-    print(searchTerm)
     searchString = "https://boxnovel.com/?s={terms}&post_type=wp-manga".format(terms = searchTerm)
+    print(searchString)
     result = requests.get(searchString)
     doc = BeautifulSoup(result.text, "html.parser")
     content = doc.find(role="tabpanel", class_="c-tabs-item")
@@ -15,12 +14,12 @@ def SearchNovels(searchTerm):
     for novel in novels:
         novelInfo = {}
         novelInfo["url"] = novel.find("a")["href"]
-        novelInfo["coverImgUrl"] = novel.find("img")["data-src"]
-        novelInfo["title"] = novel.find(class_="post-title").find("a").getText()
+        novelInfo["coverImg"] = requests.get(novel.find("img")["data-src"]).content
+        novelInfo["title"] = novel.find(class_="post-title").find("a").getText().strip('\n')
         novelsInfo.append(novelInfo)
-    print(json.dumps(novelsInfo, indent=4))
+    return novelsInfo
 
-def GetChapterContent(url, filename):
+def GetChapterContent(url):
     result = requests.get(url)
 
     doc = BeautifulSoup(result.text, "html.parser")
@@ -33,10 +32,7 @@ def GetChapterContent(url, filename):
     for elem in content.find_all(["script"]):
         elem.parent.parent.decompose()
     content = "<html><body>{content}</body></html>".format(content=content)
-    result_file = open("temp/{fname}.pdf".format(fname=filename), "w+b")
-    pisa_status = pisa.CreatePDF(content, dest=result_file)
-    result_file.close()
-    print("{fname} done downloading".format(fname=filename))
+    return content
 
 def GetChapterList(url):
     result = requests.post(
@@ -63,19 +59,20 @@ def GetNovelInfo(url):
     result = requests.get(url)
     doc = BeautifulSoup(result.text, "html.parser")
     #summary_content = doc.find(class_="summary_content")
-    novel_img = doc.find(class_="summary_image").find("img")
+    novel_img = requests.get(doc.find(class_="summary_image").find("img")["data-src"]).content
     novel_desc = doc.find(id="editdescription")
+    if novel_desc is None:
+        novel_desc = doc.find(class_="description-summary").find(class_="c_000")
+
     for elem in novel_desc.find_all(["script"]):
         elem.parent.parent.decompose()
-    
+    for br in novel_desc.find_all("br"):
+        br.replace_with("\n")
+        
+    novelTitle = doc.find(class_="post-title").find("h1").text.strip('\n')
+
     novelInfo = {}
     novelInfo["img"] = novel_img
-    novelInfo["desc"] = novel_desc
-
-
-#SearchNovels("Lord of the mysteries")
-chapters = GetChapterList("https://boxnovel.com/novel/lord-of-the-mysteries-boxnovel/")
-for i in range(10):
-    print(chapters[i])
-    GetChapterContent(chapters[i]["url"], "chapter-{num}".format(num=i))
-#GetChapterContent("https://boxnovel.com/novel/lord-of-the-mysteries-boxnovel/chapter-1/")
+    novelInfo["desc"] = novel_desc.get_text()
+    novelInfo["title"] = novelTitle
+    return novelInfo

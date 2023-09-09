@@ -8,13 +8,11 @@
     <fragment
         android:id="@+id/navigation_library"
         android:name="com.example.lnreader.ui.library.LibraryFragment"
-        android:label="@string/title_library"
         tools:layout="@layout/fragment_library" />
 
     <fragment
         android:id="@+id/navigation_download"
         android:name="com.example.lnreader.ui.download.DownloadFragment"
-        android:label="@string/title_download"
         tools:layout="@layout/fragment_download" />
 
 </navigation>

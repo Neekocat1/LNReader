@@ -1,0 +1,14 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="filter_entries">
+        <item>Title</item>
+        <item>Recent</item>
+        <item>Newest</item>
+    </string-array>
+
+    <string-array name="filter_values">
+        <item>Title</item>
+        <item>Recent</item>
+        <item>Newest</item>
+    </string-array>
+</resources>

@@ -7,12 +7,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.GridView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import com.example.lnreader.NovelActivity
+import com.example.lnreader.NovelDownloadActivity
+import com.example.lnreader.R
+import com.example.lnreader.SettingsActivity
 import com.example.lnreader.database.AppDatabase
 import com.example.lnreader.databinding.FragmentLibraryBinding
 
@@ -37,51 +39,33 @@ class LibraryFragment : Fragment() {
         _binding = FragmentLibraryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        libraryGRV = binding.gridLibrary
-        novelList = mutableListOf<LibraryGridModal>()
-        var novels = this.context?.let { AppDatabase.getDatabase(it).NovelDao().GetNovels() }
-
-        if (novels != null) {
-            for(novel in novels)
-            {
-                val novelCover = BitmapDrawable(resources, BitmapFactory.decodeFile((context?.filesDir?.absolutePath ?: "") + novel.coverLocation))
-                var libNovel = LibraryGridModal(novel.title, novelCover,novel.id)
-                novelList.add(libNovel)
+        //setup filter popup
+        var filterButton = root.findViewById<ImageButton>(R.id.filterButton)
+        filterButton.setOnClickListener{
+            var popup = PopupMenu(context, filterButton)
+            popup.inflate(R.menu.filter_menu)
+            popup.setOnMenuItemClickListener {
+                buildLibrary(it.title.toString())
+                true
             }
+            popup.show()
         }
-        /*
-        val jsonString = context?.assets?.open("library.json")?.bufferedReader(Charsets.UTF_8)
-            .use { it?.readText() }
-        val jsonArray = JSONTokener(jsonString).nextValue() as JSONArray
-
-
-        for (i in 0 until jsonArray.length())
-        {
-            var json = jsonArray.getJSONObject(i)
-            var novelTitle = json.getString("title")
-            var novelId = json.getInt("id")
-            var novelCover : Drawable
-            context?.assets?.open(json.getString("location") + "cover.png").use {
-                novelCover = Drawable.createFromStream(it, null)!!
-            }
-            novelList.add(LibraryGridModal(novelTitle, novelCover, novelId, json.getString("location")))
-        }
-        */
-
-        val libraryAdapter = this.context?.let { LibraryGridAdapter(novelList = novelList, it) }
-
-        libraryGRV.adapter = libraryAdapter
-        libraryGRV.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            // inside on click method we are simply displaying
-            // a toast message with course name.
-            Toast.makeText(
-                activity, novelList[position].novelName + " selected",
-                Toast.LENGTH_SHORT
-            ).show()
-            val intent = Intent(this.context, NovelActivity::class.java)
-            intent.putExtra("novelId", novelList[position].novelId)
+        //setup settings button
+        var settingsButton = root.findViewById<ImageButton>(R.id.settingsButton)
+        settingsButton.setOnClickListener {
+            val intent = Intent(this.context, SettingsActivity::class.java)
             activity?.startActivity(intent)
+
         }
+        val sharedPreferences = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
+        if (sharedPreferences != null) {
+            sharedPreferences.getString("filterDefault", "Title")?.let { buildLibrary(it) }
+        }
+        else
+        {
+            buildLibrary("Title")
+        }
+
 
         return root
     }
@@ -90,4 +74,34 @@ class LibraryFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun buildLibrary(filterOrder : String)
+    {
+        libraryGRV = binding.gridLibrary
+        novelList = mutableListOf<LibraryGridModal>()
+        var novels = this.context?.let { AppDatabase.getDatabase(it).NovelDao().GetNovels() }
+        if (novels != null) {
+            for(novel in novels)
+            {
+                val novelCover = BitmapDrawable(resources, BitmapFactory.decodeFile((context?.filesDir?.absolutePath ?: "") + novel.coverLocation + "cover.png"))
+                var libNovel = LibraryGridModal(novel.title, novelCover,novel.id, novel.lastUpdated, novel.lastAccessed)
+                novelList.add(libNovel)
+            }
+        }
+        when(filterOrder)
+        {
+            "Title" -> novelList = novelList.sortedBy { it.novelName }.toMutableList()
+            "Recent" -> novelList = novelList.sortedByDescending { it.novelAccessed }.toMutableList()
+            "Newest" -> novelList = novelList.sortedByDescending { it.novelUpdated }.toMutableList()
+        }
+        val libraryAdapter = this.context?.let { LibraryGridAdapter(novelList = novelList, it) }
+
+        libraryGRV.adapter = libraryAdapter
+        libraryGRV.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            val intent = Intent(this.context, NovelActivity::class.java)
+            intent.putExtra("novelId", novelList[position].novelId)
+            activity?.startActivity(intent)
+        }
+    }
+
 }
